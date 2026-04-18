@@ -68,6 +68,7 @@ export function AppShell() {
   const [reportType, setReportType] = useState<"week" | "month" | "year">("month");
   const [reportMonth, setReportMonth] = useState(new Date().toISOString().slice(0, 7));
   const [reportYear, setReportYear] = useState(String(new Date().getFullYear()));
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
 
   useEffect(() => {
     const run = async () => {
@@ -438,7 +439,7 @@ export function AppShell() {
 
       <div className="section two-col">
         <div className="card workspace-card">
-          <div className="workspace-summary">
+          <div className="workspace-summary compact-block">
             <div>
               <div className="section-title">工作區</div>
               <div className="footer-note">目前工作區</div>
@@ -464,7 +465,7 @@ export function AppShell() {
           </div>
 
           {workspacePanelOpen && (
-            <div className="workspace-manage-area">
+            <div className="workspace-manage-area compact-block">
               <div className="footer-note">你可以建立一個工作區，或用邀請碼加入他人的工作區。</div>
 
               <div className="field" style={{ marginTop: 14 }}>
@@ -527,47 +528,55 @@ export function AppShell() {
         <div>
           <div className="card section">
             <div className="section-head">
-              <div className="section-title">篩選與搜尋</div>
-            </div>
-            <div className="section-content">
-              <div className="filters">
-                <div className="field">
-                  <div className="label">關鍵字</div>
-                  <input className="input" value={filters.keyword} onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))} placeholder="搜尋分類、備註、帳別" />
-                </div>
-                <div className="field">
-                  <div className="label">類型</div>
-                  <select className="select" value={filters.type} onChange={(e) => setFilters((prev) => ({ ...prev, type: e.target.value as FilterState["type"] }))}>
-                    <option value="all">全部</option>
-                    <option value="income">收入</option>
-                    <option value="expense">支出</option>
-                    <option value="transfer">轉帳</option>
-                  </select>
-                </div>
-                <div className="field">
-                  <div className="label">帳別</div>
-                  <select className="select" value={filters.account} onChange={(e) => setFilters((prev) => ({ ...prev, account: e.target.value as FilterState["account"] }))}>
-                    <option value="all">全部</option>
-                    <option value="cash">現金</option>
-                    <option value="bank">銀行</option>
-                    <option value="cash_to_bank">現金 → 銀行</option>
-                    <option value="bank_to_cash">銀行 → 現金</option>
-                  </select>
-                </div>
-                <div className="field">
-                  <div className="label">開始日期</div>
-                  <input className="input" type="date" value={filters.startDate} onChange={(e) => setFilters((prev) => ({ ...prev, startDate: e.target.value }))} />
-                </div>
-                <div className="field">
-                  <div className="label">結束日期</div>
-                  <input className="input" type="date" value={filters.endDate} onChange={(e) => setFilters((prev) => ({ ...prev, endDate: e.target.value }))} />
-                </div>
+              <div>
+                <div className="section-title">篩選與搜尋</div>
+                <div className="footer-note">需要時再展開，不佔首頁空間。</div>
               </div>
+              <button className="btn-outline" onClick={() => setFilterPanelOpen((prev) => !prev)}>
+                {filterPanelOpen ? "收合搜尋" : "展開搜尋"}
+              </button>
+            </div>
+            {filterPanelOpen && (
+              <div className="section-content">
+                <div className="filters">
+                  <div className="field">
+                    <div className="label">關鍵字</div>
+                    <input className="input" value={filters.keyword} onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))} placeholder="搜尋分類、備註、帳別" />
+                  </div>
+                  <div className="field">
+                    <div className="label">類型</div>
+                    <select className="select" value={filters.type} onChange={(e) => setFilters((prev) => ({ ...prev, type: e.target.value as FilterState["type"] }))}>
+                      <option value="all">全部</option>
+                      <option value="income">收入</option>
+                      <option value="expense">支出</option>
+                      <option value="transfer">轉帳</option>
+                    </select>
+                  </div>
+                  <div className="field">
+                    <div className="label">帳別</div>
+                    <select className="select" value={filters.account} onChange={(e) => setFilters((prev) => ({ ...prev, account: e.target.value as FilterState["account"] }))}>
+                      <option value="all">全部</option>
+                      <option value="cash">現金</option>
+                      <option value="bank">銀行</option>
+                      <option value="cash_to_bank">現金 → 銀行</option>
+                      <option value="bank_to_cash">銀行 → 現金</option>
+                    </select>
+                  </div>
+                  <div className="field">
+                    <div className="label">開始日期</div>
+                    <input className="input" type="date" value={filters.startDate} onChange={(e) => setFilters((prev) => ({ ...prev, startDate: e.target.value }))} />
+                  </div>
+                  <div className="field">
+                    <div className="label">結束日期</div>
+                    <input className="input" type="date" value={filters.endDate} onChange={(e) => setFilters((prev) => ({ ...prev, endDate: e.target.value }))} />
+                  </div>
+                </div>
 
-              <div className="mini-actions" style={{ marginTop: 14 }}>
-                <button className="btn-outline" onClick={() => setFilters(defaultFilters)}>清除篩選</button>
+                <div className="mini-actions" style={{ marginTop: 14 }}>
+                  <button className="btn-outline" onClick={() => setFilters(defaultFilters)}>清除篩選</button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="tabs">
@@ -669,27 +678,49 @@ export function AppShell() {
                     </div>
                   )}
 
-                  <div className="table-wrap" style={{ marginTop: 16 }}>
-                    <table className="table" style={{ minWidth: 620 }}>
-                      <thead>
-                        <tr>
-                          <th>項目</th>
-                          <th>金額</th>
-                          <th>說明</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr><td>現金收入</td><td><strong>{currency(summary.cashIncome)}</strong></td><td className="muted">只計現金帳收入</td></tr>
-                        <tr><td>現金支出</td><td><strong>{currency(summary.cashExpense)}</strong></td><td className="muted">只計現金帳支出</td></tr>
-                        <tr><td>銀行收入</td><td><strong>{currency(summary.bankIncome)}</strong></td><td className="muted">只計銀行帳收入</td></tr>
-                        <tr><td>銀行支出</td><td><strong>{currency(summary.bankExpense)}</strong></td><td className="muted">只計銀行帳支出</td></tr>
-                        <tr><td>現金存入銀行</td><td><strong>{currency(summary.cashToBank)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
-                        <tr><td>銀行提款轉現金</td><td><strong>{currency(summary.bankToCash)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
-                        <tr><td>現金結餘</td><td><strong>{currency(metrics.cash)}</strong></td><td className="muted">目前現金</td></tr>
-                        <tr><td>銀行結餘</td><td><strong>{currency(metrics.bank)}</strong></td><td className="muted">目前銀行</td></tr>
-                        <tr><td><strong>總資金</strong></td><td><strong>{currency(metrics.total)}</strong></td><td className="muted">現金 + 銀行合計</td></tr>
-                      </tbody>
-                    </table>
+                  <div className="desktop-table" style={{ marginTop: 16 }}>
+                    <div className="table-wrap">
+                      <table className="table" style={{ minWidth: 620 }}>
+                        <thead>
+                          <tr>
+                            <th>項目</th>
+                            <th>金額</th>
+                            <th>說明</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr><td>現金收入</td><td><strong>{currency(summary.cashIncome)}</strong></td><td className="muted">只計現金帳收入</td></tr>
+                          <tr><td>現金支出</td><td><strong>{currency(summary.cashExpense)}</strong></td><td className="muted">只計現金帳支出</td></tr>
+                          <tr><td>銀行收入</td><td><strong>{currency(summary.bankIncome)}</strong></td><td className="muted">只計銀行帳收入</td></tr>
+                          <tr><td>銀行支出</td><td><strong>{currency(summary.bankExpense)}</strong></td><td className="muted">只計銀行帳支出</td></tr>
+                          <tr><td>現金存入銀行</td><td><strong>{currency(summary.cashToBank)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
+                          <tr><td>銀行提款轉現金</td><td><strong>{currency(summary.bankToCash)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
+                          <tr><td>現金結餘</td><td><strong>{currency(metrics.cash)}</strong></td><td className="muted">目前現金</td></tr>
+                          <tr><td>銀行結餘</td><td><strong>{currency(metrics.bank)}</strong></td><td className="muted">目前銀行</td></tr>
+                          <tr><td><strong>總資金</strong></td><td><strong>{currency(metrics.total)}</strong></td><td className="muted">現金 + 銀行合計</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="mobile-report-list" style={{ marginTop: 16 }}>
+                    {[
+                      ["現金收入", currency(summary.cashIncome), "只計現金帳收入"],
+                      ["現金支出", currency(summary.cashExpense), "只計現金帳支出"],
+                      ["銀行收入", currency(summary.bankIncome), "只計銀行帳收入"],
+                      ["銀行支出", currency(summary.bankExpense), "只計銀行帳支出"],
+                      ["現金存入銀行", currency(summary.cashToBank), "帳戶間移轉，不列入總收入"],
+                      ["銀行提款轉現金", currency(summary.bankToCash), "帳戶間移轉，不列入總收入"],
+                      ["現金結餘", currency(metrics.cash), "目前現金"],
+                      ["銀行結餘", currency(metrics.bank), "目前銀行"],
+                      ["總資金", currency(metrics.total), "現金 + 銀行合計"]
+                    ].map(([label, value, note]) => (
+                      <div key={String(label)} className="mobile-report-card">
+                        <div className="mobile-report-label">{label}</div>
+                        <div className="mobile-report-value">{value}</div>
+                        <div className="mobile-report-note">{note}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
