@@ -437,7 +437,7 @@ export function AppShell() {
         </div>
       </div>
 
-      <div className="section two-col">
+      <div className="section desktop-main-grid">
         <div className="card workspace-card">
           <div className="workspace-summary compact-block">
             <div>
@@ -525,7 +525,7 @@ export function AppShell() {
           )}
         </div>
 
-        <div>
+        <div className="main-content-stack">
           <div className="card section">
             <div className="section-head">
               <div>
