@@ -798,3 +798,57 @@ a{color:inherit;text-decoration:none}
     justify-content:center;
   }
 }
+
+
+/* Move desktop tab row slightly lower for cleaner alignment */
+@media (min-width: 721px){
+  .desktop-main-grid .tabs{
+    margin-top: 18px !important;
+  }
+
+  .desktop-main-grid .card.section + .tabs{
+    margin-top: 18px !important;
+  }
+}
+
+
+/* Top row fixed + centered lower content */
+.top-row-grid{
+  display:grid;
+  grid-template-columns:minmax(280px, 340px) minmax(0, 1fr);
+  gap:16px;
+  align-items:start;
+}
+
+.centered-main-area{
+  width:min(1100px, calc(100% - 32px));
+  margin:28px auto 0;
+}
+
+@media (min-width: 721px){
+  .top-row-grid .workspace-card{
+    align-self:start;
+  }
+
+  .centered-main-area .tabs,
+  .centered-main-area .card.section,
+  .centered-main-area .section.two-col{
+    width:100%;
+  }
+
+  .centered-main-area .section.two-col{
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
+
+@media (max-width: 720px){
+  .top-row-grid{
+    grid-template-columns:1fr;
+  }
+
+  .centered-main-area{
+    width:100%;
+    margin-top:18px;
+  }
+}

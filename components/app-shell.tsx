@@ -437,7 +437,7 @@ export function AppShell() {
         </div>
       </div>
 
-      <div className="section desktop-main-grid">
+      <div className="section top-row-grid">
         <div className="card workspace-card">
           <div className="workspace-summary compact-block">
             <div>
@@ -526,7 +526,7 @@ export function AppShell() {
         </div>
 
         <div className="main-content-stack">
-          <div className="card section">
+        <div className="card section">
             <div className="section-head">
               <div>
                 <div className="section-title">篩選與搜尋</div>
@@ -579,7 +579,10 @@ export function AppShell() {
             )}
           </div>
 
-          <div className="tabs">
+      </div>
+
+      <div className="centered-main-area">
+        <div className="tabs">
             <button className={`tab ${tab === "dashboard" ? "active" : ""}`} onClick={() => setTab("dashboard")}>首頁</button>
             <button className={`tab ${tab === "cash" ? "active" : ""}`} onClick={() => setTab("cash")}>現金帳</button>
             <button className={`tab ${tab === "bank" ? "active" : ""}`} onClick={() => setTab("bank")}>銀行帳</button>
@@ -760,6 +763,8 @@ export function AppShell() {
             </div>
           )}
         </div>
+      </div>
+
       </div>
 
       {modalOpen && (
