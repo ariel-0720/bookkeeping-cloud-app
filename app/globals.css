@@ -321,6 +321,24 @@ a{color:inherit;text-decoration:none}
 }
 
 
+.workspace-summary{
+  display:flex;
+  flex-direction:column;
+}
+
+.workspace-current-name{
+  margin-top:6px;
+  font-size:22px;
+  font-weight:800;
+  line-height:1.2;
+}
+
+.workspace-manage-area{
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+
 .desktop-table{
   display:block;
 }
@@ -401,6 +419,14 @@ a{color:inherit;text-decoration:none}
     display:block;
   }
 
+  .workspace-card{
+    padding:0;
+  }
+
+  .workspace-current-name{
+    font-size:18px;
+  }
+
   .mobile-tx-card{
     padding:12px;
     border-radius:16px;
@@ -416,5 +442,18 @@ a{color:inherit;text-decoration:none}
 
   .mobile-tx-note{
     font-size:12px;
+  }
+}
+
+
+.report-switcher{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+@media (max-width: 720px){
+  .report-switcher{
+    grid-template-columns:repeat(3,1fr);
   }
 }

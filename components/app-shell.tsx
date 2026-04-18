@@ -64,6 +64,10 @@ export function AppShell() {
   const [messageType, setMessageType] = useState<"success" | "error" | "notice">("notice");
   const [loading, setLoading] = useState(false);
   const [savingBalances, setSavingBalances] = useState(false);
+  const [workspacePanelOpen, setWorkspacePanelOpen] = useState(false);
+  const [reportType, setReportType] = useState<"week" | "month" | "year">("month");
+  const [reportMonth, setReportMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [reportYear, setReportYear] = useState(String(new Date().getFullYear()));
 
   useEffect(() => {
     const run = async () => {
@@ -298,6 +302,32 @@ export function AppShell() {
 
   const currentWorkspace = workspaces.find((item) => item.id === currentWorkspaceId) ?? null;
 
+  const reportFilteredTransactions = useMemo(() => {
+    return transactions.filter((tx) => {
+      if (reportType === "month") {
+        return tx.date.slice(0, 7) === reportMonth;
+      }
+
+      if (reportType === "year") {
+        return tx.date.slice(0, 4) === reportYear;
+      }
+
+      const targetDate = new Date();
+      const day = targetDate.getDay();
+      const diff = day === 0 ? 6 : day - 1;
+      const monday = new Date(targetDate);
+      monday.setHours(0, 0, 0, 0);
+      monday.setDate(targetDate.getDate() - diff);
+
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
+
+      const txDate = new Date(tx.date + "T12:00:00");
+      return txDate >= monday && txDate <= sunday;
+    });
+  }, [transactions, reportType, reportMonth, reportYear]);
+
   const filteredTransactions = useMemo(() => {
     return transactions.filter((tx) => {
       const hay = [tx.category, tx.note ?? "", accountLabel(tx.account), typeLabel(tx.type)].join(" ").toLowerCase();
@@ -313,15 +343,16 @@ export function AppShell() {
   }, [transactions, filters]);
 
   const metrics = useMemo(() => {
-    return getMetrics(filteredTransactions, settings?.opening_cash ?? 0, settings?.opening_bank ?? 0);
-  }, [filteredTransactions, settings]);
+    return getMetrics(reportFilteredTransactions, settings?.opening_cash ?? 0, settings?.opening_bank ?? 0);
+  }, [reportFilteredTransactions, settings]);
 
-  const summary = useMemo(() => getSummaryRows(filteredTransactions), [filteredTransactions]);
+  const summary = useMemo(() => getSummaryRows(reportFilteredTransactions), [reportFilteredTransactions]);
 
   const cashRows = filteredTransactions.filter((tx) => ["cash", "cash_to_bank", "bank_to_cash"].includes(tx.account));
   const bankRows = filteredTransactions.filter((tx) => ["bank", "cash_to_bank", "bank_to_cash"].includes(tx.account));
 
   const inviteCode = currentWorkspace?.invite_code ?? "";
+  const reportTitle = reportType === "week" ? "週報" : reportType === "month" ? "月報" : "年報";
   const categories = categoryOptions(form.type);
   const accounts = accountOptions(form.type);
 
@@ -335,6 +366,7 @@ export function AppShell() {
 
   function exportReportCsv() {
     const rows = [
+      ["報表類型", reportTitle, ""],
       ["項目", "金額", "說明"],
       ["現金收入", summary.cashIncome, "只計現金帳收入"],
       ["現金支出", summary.cashExpense, "只計現金帳支出"],
@@ -406,52 +438,88 @@ export function AppShell() {
 
       <div className="section two-col">
         <div className="card workspace-card">
-          <div className="section-title">工作區</div>
-          <div className="footer-note">你可以建立一個工作區，或用邀請碼加入他人的工作區。</div>
+          <div className="workspace-summary">
+            <div>
+              <div className="section-title">工作區</div>
+              <div className="footer-note">目前工作區</div>
+              <div className="workspace-current-name">
+                {currentWorkspace?.name ?? "尚未選擇工作區"}
+              </div>
+              {inviteCode ? (
+                <>
+                  <div className="footer-note" style={{ marginTop: 10 }}>分享邀請碼</div>
+                  <div className="code" style={{ marginTop: 8 }}>{inviteCode}</div>
+                </>
+              ) : null}
+            </div>
 
-          <div className="field" style={{ marginTop: 14 }}>
-            <div className="label">切換工作區</div>
-            <select
-              className="select"
-              value={currentWorkspaceId}
-              onChange={(e) => setCurrentWorkspaceId(e.target.value)}
-            >
-              <option value="">請選擇</option>
-              {workspaces.map((workspace) => (
-                <option key={workspace.id} value={workspace.id}>
-                  {workspace.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="field" style={{ marginTop: 14 }}>
-            <div className="label">建立新工作區</div>
-            <input className="input" value={workspaceName} onChange={(e) => setWorkspaceName(e.target.value)} placeholder="例如：序元營運帳" />
-            <div style={{ marginTop: 10 }}>
-              <button className="btn" disabled={loading || !workspaceName.trim()} onClick={createWorkspace}>
-                建立工作區
+            <div className="mini-actions" style={{ marginTop: 12 }}>
+              <button
+                className="btn-outline"
+                onClick={() => setWorkspacePanelOpen((prev) => !prev)}
+              >
+                {workspacePanelOpen ? "收合工作區設定" : "管理工作區"}
               </button>
             </div>
           </div>
 
-          <div className="field" style={{ marginTop: 18 }}>
-            <div className="label">用邀請碼加入</div>
-            <input className="input" value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder="輸入邀請碼" />
-            <div style={{ marginTop: 10 }}>
-              <button className="btn-outline" disabled={loading || !joinCode.trim()} onClick={joinWorkspace}>
-                加入工作區
-              </button>
-            </div>
-          </div>
+          {workspacePanelOpen && (
+            <div className="workspace-manage-area">
+              <div className="footer-note">你可以建立一個工作區，或用邀請碼加入他人的工作區。</div>
 
-          {currentWorkspace && (
-            <div style={{ marginTop: 18 }}>
-              <div className="label">目前工作區</div>
-              <div className="code" style={{ marginTop: 8 }}>{currentWorkspace.name}</div>
-              <div className="label" style={{ marginTop: 12 }}>分享邀請碼</div>
-              <div className="code" style={{ marginTop: 8 }}>{inviteCode}</div>
-              <div className="footer-note">把這個邀請碼給其他人，他們註冊後就能加入同一份資料。</div>
+              <div className="field" style={{ marginTop: 14 }}>
+                <div className="label">切換工作區</div>
+                <select
+                  className="select"
+                  value={currentWorkspaceId}
+                  onChange={(e) => setCurrentWorkspaceId(e.target.value)}
+                >
+                  <option value="">請選擇</option>
+                  {workspaces.map((workspace) => (
+                    <option key={workspace.id} value={workspace.id}>
+                      {workspace.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="field" style={{ marginTop: 14 }}>
+                <div className="label">建立新工作區</div>
+                <input
+                  className="input"
+                  value={workspaceName}
+                  onChange={(e) => setWorkspaceName(e.target.value)}
+                  placeholder="例如：序元營運帳"
+                />
+                <div style={{ marginTop: 10 }}>
+                  <button
+                    className="btn"
+                    disabled={loading || !workspaceName.trim()}
+                    onClick={createWorkspace}
+                  >
+                    建立工作區
+                  </button>
+                </div>
+              </div>
+
+              <div className="field" style={{ marginTop: 18 }}>
+                <div className="label">用邀請碼加入</div>
+                <input
+                  className="input"
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                  placeholder="輸入邀請碼"
+                />
+                <div style={{ marginTop: 10 }}>
+                  <button
+                    className="btn-outline"
+                    disabled={loading || !joinCode.trim()}
+                    onClick={joinWorkspace}
+                  >
+                    加入工作區
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -567,28 +635,62 @@ export function AppShell() {
           {tab === "report" && (
             <div className="section two-col">
               <div className="card">
-                <div className="section-head"><div className="section-title">本期回報表</div></div>
-                <div className="section-content table-wrap">
-                  <table className="table" style={{ minWidth: 620 }}>
-                    <thead>
-                      <tr>
-                        <th>項目</th>
-                        <th>金額</th>
-                        <th>說明</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr><td>現金收入</td><td><strong>{currency(summary.cashIncome)}</strong></td><td className="muted">只計現金帳收入</td></tr>
-                      <tr><td>現金支出</td><td><strong>{currency(summary.cashExpense)}</strong></td><td className="muted">只計現金帳支出</td></tr>
-                      <tr><td>銀行收入</td><td><strong>{currency(summary.bankIncome)}</strong></td><td className="muted">只計銀行帳收入</td></tr>
-                      <tr><td>銀行支出</td><td><strong>{currency(summary.bankExpense)}</strong></td><td className="muted">只計銀行帳支出</td></tr>
-                      <tr><td>現金存入銀行</td><td><strong>{currency(summary.cashToBank)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
-                      <tr><td>銀行提款轉現金</td><td><strong>{currency(summary.bankToCash)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
-                      <tr><td>現金結餘</td><td><strong>{currency(metrics.cash)}</strong></td><td className="muted">目前現金</td></tr>
-                      <tr><td>銀行結餘</td><td><strong>{currency(metrics.bank)}</strong></td><td className="muted">目前銀行</td></tr>
-                      <tr><td><strong>總資金</strong></td><td><strong>{currency(metrics.total)}</strong></td><td className="muted">現金 + 銀行合計</td></tr>
-                    </tbody>
-                  </table>
+                <div className="section-head">
+                  <div className="section-title">{reportTitle}</div>
+                </div>
+                <div className="section-content">
+                  <div className="report-switcher">
+                    <button className={`tab ${reportType === "week" ? "active" : ""}`} onClick={() => setReportType("week")}>週</button>
+                    <button className={`tab ${reportType === "month" ? "active" : ""}`} onClick={() => setReportType("month")}>月</button>
+                    <button className={`tab ${reportType === "year" ? "active" : ""}`} onClick={() => setReportType("year")}>年</button>
+                  </div>
+
+                  {reportType === "month" && (
+                    <div className="field" style={{ marginTop: 14 }}>
+                      <div className="label">月份</div>
+                      <input
+                        className="input"
+                        type="month"
+                        value={reportMonth}
+                        onChange={(e) => setReportMonth(e.target.value)}
+                      />
+                    </div>
+                  )}
+
+                  {reportType === "year" && (
+                    <div className="field" style={{ marginTop: 14 }}>
+                      <div className="label">年份</div>
+                      <input
+                        className="input"
+                        type="number"
+                        value={reportYear}
+                        onChange={(e) => setReportYear(e.target.value)}
+                      />
+                    </div>
+                  )}
+
+                  <div className="table-wrap" style={{ marginTop: 16 }}>
+                    <table className="table" style={{ minWidth: 620 }}>
+                      <thead>
+                        <tr>
+                          <th>項目</th>
+                          <th>金額</th>
+                          <th>說明</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>現金收入</td><td><strong>{currency(summary.cashIncome)}</strong></td><td className="muted">只計現金帳收入</td></tr>
+                        <tr><td>現金支出</td><td><strong>{currency(summary.cashExpense)}</strong></td><td className="muted">只計現金帳支出</td></tr>
+                        <tr><td>銀行收入</td><td><strong>{currency(summary.bankIncome)}</strong></td><td className="muted">只計銀行帳收入</td></tr>
+                        <tr><td>銀行支出</td><td><strong>{currency(summary.bankExpense)}</strong></td><td className="muted">只計銀行帳支出</td></tr>
+                        <tr><td>現金存入銀行</td><td><strong>{currency(summary.cashToBank)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
+                        <tr><td>銀行提款轉現金</td><td><strong>{currency(summary.bankToCash)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
+                        <tr><td>現金結餘</td><td><strong>{currency(metrics.cash)}</strong></td><td className="muted">目前現金</td></tr>
+                        <tr><td>銀行結餘</td><td><strong>{currency(metrics.bank)}</strong></td><td className="muted">目前銀行</td></tr>
+                        <tr><td><strong>總資金</strong></td><td><strong>{currency(metrics.total)}</strong></td><td className="muted">現金 + 銀行合計</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
 
@@ -744,23 +846,15 @@ function TransactionTable({
             {rows.map((tx) => (
               <tr key={tx.id}>
                 <td>{tx.date}</td>
-                <td>
-                  <span className="badge">{typeLabel(tx.type)}</span>
-                </td>
+                <td><span className="badge">{typeLabel(tx.type)}</span></td>
                 <td>{accountLabel(tx.account)}</td>
                 <td>{tx.category}</td>
-                <td>
-                  <strong>{currency(tx.amount)}</strong>
-                </td>
+                <td><strong>{currency(tx.amount)}</strong></td>
                 <td className="muted">{tx.note ?? ""}</td>
                 <td>
                   <div className="mini-actions">
-                    <button className="btn-outline" onClick={() => onEdit(tx)}>
-                      編輯
-                    </button>
-                    <button className="btn-danger" onClick={() => onDelete(tx.id)}>
-                      刪除
-                    </button>
+                    <button className="btn-outline" onClick={() => onEdit(tx)}>編輯</button>
+                    <button className="btn-danger" onClick={() => onDelete(tx.id)}>刪除</button>
                   </div>
                 </td>
               </tr>
@@ -801,4 +895,3 @@ function TransactionTable({
     </>
   );
 }
-
