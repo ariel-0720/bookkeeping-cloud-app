@@ -751,3 +751,50 @@ a{color:inherit;text-decoration:none}
     position:static;
   }
 }
+
+
+/* Wider report area on desktop */
+@media (min-width: 721px){
+  .desktop-main-grid .section.two-col{
+    grid-template-columns:minmax(0, 1.7fr) minmax(280px, 0.7fr) !important;
+    gap:18px;
+  }
+
+  .desktop-main-grid .section.two-col .card:first-child{
+    min-width:0;
+  }
+
+  .desktop-main-grid .section.two-col .card:last-child{
+    max-width:360px;
+  }
+
+  .desktop-main-grid .section.two-col .table-wrap{
+    overflow-x:auto;
+  }
+}
+
+
+/* Settings inputs same width as save button on desktop */
+@media (min-width: 721px){
+  .desktop-main-grid .section.two-col .card:last-child .section-content{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .desktop-main-grid .section.two-col .card:last-child .field,
+  .desktop-main-grid .section.two-col .card:last-child .footer-note{
+    width:180px;
+    max-width:180px;
+  }
+
+  .desktop-main-grid .section.two-col .card:last-child .input{
+    width:180px;
+    max-width:180px;
+  }
+
+  .desktop-main-grid .section.two-col .card:last-child .btn{
+    width:180px;
+    justify-content:center;
+  }
+}
