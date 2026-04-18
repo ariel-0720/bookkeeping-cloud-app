@@ -578,15 +578,15 @@ export function AppShell() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr><td>現金收入</td><td><strong>{currency(summary.cashIncome)}</strong></td><td className="muted">只計現金帳收入</td></tr>
-                      <tr><td>現金支出</td><td><strong>{currency(summary.cashExpense)}</strong></td><td className="muted">只計現金帳支出</td></tr>
-                      <tr><td>銀行收入</td><td><strong>{currency(summary.bankIncome)}</strong></td><td className="muted">只計銀行帳收入</td></tr>
-                      <tr><td>銀行支出</td><td><strong>{currency(summary.bankExpense)}</strong></td><td className="muted">只計銀行帳支出</td></tr>
-                      <tr><td>現金存入銀行</td><td><strong>{currency(summary.cashToBank)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
-                      <tr><td>銀行提款轉現金</td><td><strong>{currency(summary.bankToCash)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
-                      <tr><td>現金結餘</td><td><strong>{currency(metrics.cash)}</strong></td><td className="muted">目前現金</td></tr>
-                      <tr><td>銀行結餘</td><td><strong>{currency(metrics.bank)}</strong></td><td className="muted">目前銀行</td></tr>
-                      <tr><td><strong>總資金</strong></td><td><strong>{currency(metrics.total)}</strong></td><td className="muted">現金 + 銀行合計</td></tr>
+                      <tr><td data-label="項目">現金收入</td><td data-label="金額"><strong>{currency(summary.cashIncome)}</strong></td><td data-label="說明" className="muted">只計現金帳收入</td></tr>
+                      <tr><td data-label="項目">現金支出</td><td data-label="金額"><strong>{currency(summary.cashExpense)}</strong></td><td data-label="說明" className="muted">只計現金帳支出</td></tr>
+                      <tr><td data-label="項目">銀行收入</td><td data-label="金額"><strong>{currency(summary.bankIncome)}</strong></td><td data-label="說明" className="muted">只計銀行帳收入</td></tr>
+                      <tr><td data-label="項目">銀行支出</td><td data-label="金額"><strong>{currency(summary.bankExpense)}</strong></td><td data-label="說明" className="muted">只計銀行帳支出</td></tr>
+                      <tr><td data-label="項目">現金存入銀行</td><td data-label="金額"><strong>{currency(summary.cashToBank)}</strong></td><td data-label="說明" className="muted">帳戶間移轉，不列入總收入</td></tr>
+                      <tr><td data-label="項目">銀行提款轉現金</td><td data-label="金額"><strong>{currency(summary.bankToCash)}</strong></td><td data-label="說明" className="muted">帳戶間移轉，不列入總收入</td></tr>
+                      <tr><td data-label="項目">現金結餘</td><td data-label="金額"><strong>{currency(metrics.cash)}</strong></td><td data-label="說明" className="muted">目前現金</td></tr>
+                      <tr><td data-label="項目">銀行結餘</td><td data-label="金額"><strong>{currency(metrics.bank)}</strong></td><td data-label="說明" className="muted">目前銀行</td></tr>
+                      <tr><td data-label="項目"><strong>總資金</strong></td><td data-label="金額"><strong>{currency(metrics.total)}</strong></td><td data-label="說明" className="muted">現金 + 銀行合計</td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -642,7 +642,7 @@ export function AppShell() {
           <div className="card" style={{ width: "min(760px,100%)", padding: 22 }}>
             <div className="section-title">{editingId ? "編輯交易" : "新增一筆交易"}</div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 16 }}>
+            <div className="filters" style={{ gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 16 }}>
               <div className="field">
                 <div className="label">日期</div>
                 <input className="input" type="date" value={form.date} onChange={(e) => setForm((prev) => ({ ...prev, date: e.target.value }))} />
@@ -741,13 +741,13 @@ function TransactionTable({
       <tbody>
         {rows.map((tx) => (
           <tr key={tx.id}>
-            <td>{tx.date}</td>
-            <td><span className="badge">{typeLabel(tx.type)}</span></td>
-            <td>{accountLabel(tx.account)}</td>
-            <td>{tx.category}</td>
-            <td><strong>{currency(tx.amount)}</strong></td>
-            <td className="muted">{tx.note ?? ""}</td>
-            <td>
+            <td data-label="日期">{tx.date}</td>
+            <td data-label="類型"><span className="badge">{typeLabel(tx.type)}</span></td>
+            <td data-label="帳別">{accountLabel(tx.account)}</td>
+            <td data-label="分類">{tx.category}</td>
+            <td data-label="金額"><strong>{currency(tx.amount)}</strong></td>
+            <td data-label="備註" className="muted">{tx.note ?? ""}</td>
+            <td data-label="操作">
               <div className="mini-actions">
                 <button className="btn-outline" onClick={() => onEdit(tx)}>編輯</button>
                 <button className="btn-danger" onClick={() => onDelete(tx.id)}>刪除</button>
