@@ -744,15 +744,23 @@ function TransactionTable({
             {rows.map((tx) => (
               <tr key={tx.id}>
                 <td>{tx.date}</td>
-                <td><span className="badge">{typeLabel(tx.type)}</span></td>
+                <td>
+                  <span className="badge">{typeLabel(tx.type)}</span>
+                </td>
                 <td>{accountLabel(tx.account)}</td>
                 <td>{tx.category}</td>
-                <td><strong>{currency(tx.amount)}</strong></td>
+                <td>
+                  <strong>{currency(tx.amount)}</strong>
+                </td>
                 <td className="muted">{tx.note ?? ""}</td>
                 <td>
                   <div className="mini-actions">
-                    <button className="btn-outline" onClick={() => onEdit(tx)}>編輯</button>
-                    <button className="btn-danger" onClick={() => onDelete(tx.id)}>刪除</button>
+                    <button className="btn-outline" onClick={() => onEdit(tx)}>
+                      編輯
+                    </button>
+                    <button className="btn-danger" onClick={() => onDelete(tx.id)}>
+                      刪除
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -780,54 +788,17 @@ function TransactionTable({
             {tx.note ? <div className="mobile-tx-note">{tx.note}</div> : null}
 
             <div className="mobile-tx-actions">
-              <button className="btn-outline mobile-action-btn" onClick={() => onEdit(tx)}>編輯</button>
-              <button className="btn-danger mobile-action-btn" onClick={() => onDelete(tx.id)}>刪除</button>
+              <button className="btn-outline mobile-action-btn" onClick={() => onEdit(tx)}>
+                編輯
+              </button>
+              <button className="btn-danger mobile-action-btn" onClick={() => onDelete(tx.id)}>
+                刪除
+              </button>
             </div>
           </div>
         ))}
       </div>
     </>
   );
-}: {
-  rows: TransactionRow[];
-  onEdit: (tx: TransactionRow) => void;
-  onDelete: (id: string) => void;
-}) {
-  if (!rows.length) {
-    return <div className="empty">目前沒有符合條件的資料</div>;
-  }
-
-  return (
-    <table className="table">
-      <thead>
-        <tr>
-          <th>日期</th>
-          <th>類型</th>
-          <th>帳別</th>
-          <th>分類</th>
-          <th>金額</th>
-          <th>備註</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((tx) => (
-          <tr key={tx.id}>
-            <td>{tx.date}</td>
-            <td><span className="badge">{typeLabel(tx.type)}</span></td>
-            <td>{accountLabel(tx.account)}</td>
-            <td>{tx.category}</td>
-            <td><strong>{currency(tx.amount)}</strong></td>
-            <td className="muted">{tx.note ?? ""}</td>
-            <td>
-              <div className="mini-actions">
-                <button className="btn-outline" onClick={() => onEdit(tx)}>編輯</button>
-                <button className="btn-danger" onClick={() => onDelete(tx.id)}>刪除</button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
 }
+
