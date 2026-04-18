@@ -765,8 +765,6 @@ export function AppShell() {
         </div>
       </div>
 
-      </div>
-
       {modalOpen && (
         <div style={{
           position: "fixed",
