@@ -603,6 +603,12 @@ export function AppShell() {
           {tab === "cash" && (
             <div className="section two-col">
               <div className="card">
+                <div className="section-head"><div className="section-title">現金帳明細</div></div>
+                <div className="section-content table-wrap">
+                  <TransactionTable rows={cashRows} onEdit={openEditModal} onDelete={deleteTransaction} />
+                </div>
+              </div>
+              <div className="card">
                 <div className="section-head"><div className="section-title">現金帳摘要</div></div>
                 <div className="section-content">
                   <SummaryList items={[
@@ -613,17 +619,17 @@ export function AppShell() {
                   ]} />
                 </div>
               </div>
-              <div className="card">
-                <div className="section-head"><div className="section-title">現金帳明細</div></div>
-                <div className="section-content table-wrap">
-                  <TransactionTable rows={cashRows} onEdit={openEditModal} onDelete={deleteTransaction} />
-                </div>
-              </div>
             </div>
           )}
 
           {tab === "bank" && (
             <div className="section two-col">
+              <div className="card">
+                <div className="section-head"><div className="section-title">銀行帳明細</div></div>
+                <div className="section-content table-wrap">
+                  <TransactionTable rows={bankRows} onEdit={openEditModal} onDelete={deleteTransaction} />
+                </div>
+              </div>
               <div className="card">
                 <div className="section-head"><div className="section-title">銀行帳摘要</div></div>
                 <div className="section-content">
@@ -633,12 +639,6 @@ export function AppShell() {
                     ["現金存入", currency(summary.cashToBank)],
                     ["提款轉現金", currency(summary.bankToCash)]
                   ]} />
-                </div>
-              </div>
-              <div className="card">
-                <div className="section-head"><div className="section-title">銀行帳明細</div></div>
-                <div className="section-content table-wrap">
-                  <TransactionTable rows={bankRows} onEdit={openEditModal} onDelete={deleteTransaction} />
                 </div>
               </div>
             </div>
