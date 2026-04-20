@@ -1180,3 +1180,84 @@ a{color:inherit;text-decoration:none}
     min-width:620px;
   }
 }
+
+
+/* Tighter spacing for homepage income/expense lists on desktop */
+@media (min-width: 721px){
+  .dashboard-split{
+    gap: 16px;
+  }
+
+  .dashboard-compact-table th,
+  .dashboard-compact-table td{
+    padding: 8px 6px !important;
+    font-size: 13px !important;
+    line-height: 1.2;
+  }
+
+  .dashboard-compact-table th:nth-child(1),
+  .dashboard-compact-table td:nth-child(1){ width: 19%; }
+
+  .dashboard-compact-table th:nth-child(2),
+  .dashboard-compact-table td:nth-child(2){ width: 11%; }
+
+  .dashboard-compact-table th:nth-child(3),
+  .dashboard-compact-table td:nth-child(3){ width: 13%; }
+
+  .dashboard-compact-table th:nth-child(4),
+  .dashboard-compact-table td:nth-child(4){ width: 15%; }
+
+  .dashboard-compact-table th:nth-child(5),
+  .dashboard-compact-table td:nth-child(5){ width: 20%; }
+
+  .dashboard-compact-table th:nth-child(6),
+  .dashboard-compact-table td:nth-child(6){ width: 16%; }
+
+  .dashboard-compact-table .mini-actions,
+  .compact-actions{
+    gap: 4px !important;
+  }
+
+  .dashboard-compact-table .btn-outline,
+  .dashboard-compact-table .btn-danger,
+  .compact-btn{
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+    min-width: 0 !important;
+    line-height: 1.1;
+  }
+
+  .dashboard-compact-table .badge{
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+  }
+
+  .dashboard-compact-table .compact-note-cell{
+    max-width: 0;
+  }
+}
+
+
+.icon-btn{
+  width:28px;
+  min-width:28px !important;
+  height:28px;
+  padding:0 !important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px !important;
+  line-height:1;
+}
+
+@media (min-width: 721px){
+  .dashboard-compact-table th:nth-child(1),
+  .dashboard-compact-table td:nth-child(1){ width: 14%; }
+
+  .dashboard-compact-table th:nth-child(6),
+  .dashboard-compact-table td:nth-child(6){ width: 10%; }
+
+  .dashboard-compact-table .compact-actions{
+    justify-content:flex-start;
+  }
+}

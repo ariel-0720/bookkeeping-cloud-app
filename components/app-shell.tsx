@@ -901,23 +901,26 @@ function CompactTransactionTable({
           </tr>
         </thead>
         <tbody>
-          {rows.map((tx) => (
-            <tr key={tx.id}>
-              <td>{tx.date}</td>
-              <td>{accountLabel(tx.account)}</td>
-              <td>{tx.category}</td>
-              <td className={tx.type === "income" ? "money-income" : "money-expense"}>
-                <strong>{currency(tx.amount)}</strong>
-              </td>
-              <td className="muted compact-note-cell">{tx.note ?? ""}</td>
-              <td>
-                <div className="mini-actions compact-actions">
-                  <button className="btn-outline compact-btn" onClick={() => onEdit(tx)}>編輯</button>
-                  <button className="btn-danger compact-btn" onClick={() => onDelete(tx.id)}>刪除</button>
-                </div>
-              </td>
-            </tr>
-          ))}
+          {rows.map((tx) => {
+            const shortDate = tx.date.slice(5).replace("-", "/");
+            return (
+              <tr key={tx.id}>
+                <td>{shortDate}</td>
+                <td>{accountLabel(tx.account)}</td>
+                <td>{tx.category}</td>
+                <td className={tx.type === "income" ? "money-income" : "money-expense"}>
+                  <strong>{currency(tx.amount)}</strong>
+                </td>
+                <td className="muted compact-note-cell">{tx.note ?? ""}</td>
+                <td>
+                  <div className="mini-actions compact-actions">
+                    <button className="btn-outline compact-btn icon-btn" aria-label="編輯" title="編輯" onClick={() => onEdit(tx)}>✎</button>
+                    <button className="btn-danger compact-btn icon-btn" aria-label="刪除" title="刪除" onClick={() => onDelete(tx.id)}>✕</button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
