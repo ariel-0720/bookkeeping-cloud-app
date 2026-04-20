@@ -1116,3 +1116,19 @@ a{color:inherit;text-decoration:none}
     max-width:none !important;
   }
 }
+
+
+/* Put cash/bank detail and summary on the same top row */
+@media (min-width: 721px){
+  .cash-bank-layout > .card:first-child{
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+  }
+
+  .cash-bank-layout > .card:last-child{
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+  }
+}
