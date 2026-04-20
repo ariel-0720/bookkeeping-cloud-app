@@ -596,18 +596,37 @@ export function AppShell() {
           </div>
 
           {tab === "dashboard" && (
-            <div className="card section">
-              <div className="section-head">
-                <div className="section-title">交易列表</div>
+            <div className="section dashboard-split">
+              <div className="card section">
+                <div className="section-head">
+                  <div className="section-title">收入列表</div>
+                </div>
+                <div className="section-content table-wrap">
+                  <TransactionTable
+                    rows={filteredTransactions.filter((tx) => tx.type === "income")}
+                    onEdit={openEditModal}
+                    onDelete={deleteTransaction}
+                  />
+                </div>
               </div>
-              <div className="section-content table-wrap">
-                <TransactionTable rows={filteredTransactions} onEdit={openEditModal} onDelete={deleteTransaction} />
+
+              <div className="card section">
+                <div className="section-head">
+                  <div className="section-title">支出列表</div>
+                </div>
+                <div className="section-content table-wrap">
+                  <TransactionTable
+                    rows={filteredTransactions.filter((tx) => tx.type === "expense")}
+                    onEdit={openEditModal}
+                    onDelete={deleteTransaction}
+                  />
+                </div>
               </div>
             </div>
           )}
 
           {tab === "cash" && (
-            <div className="section two-col">
+            <div className="section two-col detail-wide">
               <div className="card">
                 <div className="section-head"><div className="section-title">現金帳摘要</div></div>
                 <div className="section-content">
@@ -629,7 +648,7 @@ export function AppShell() {
           )}
 
           {tab === "bank" && (
-            <div className="section two-col">
+            <div className="section two-col detail-wide">
               <div className="card">
                 <div className="section-head"><div className="section-title">銀行帳摘要</div></div>
                 <div className="section-content">
