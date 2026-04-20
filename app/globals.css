@@ -1055,11 +1055,11 @@ a{color:inherit;text-decoration:none}
 }
 
 
-/* Rebuild cash/bank desktop layout only */
+/* Cash/Bank layout aligned with report page: detail left, summary right */
 @media (min-width: 721px){
   .cash-bank-layout{
     display:grid !important;
-    grid-template-columns: 300px minmax(0, 1fr) !important;
+    grid-template-columns:minmax(0, 1fr) 320px !important;
     gap:18px !important;
     align-items:start !important;
     width:100% !important;
@@ -1074,14 +1074,14 @@ a{color:inherit;text-decoration:none}
   }
 
   .cash-bank-layout > .card:first-child{
-    width:300px !important;
-    min-width:300px !important;
-    max-width:300px !important;
-    grid-column:1 !important;
+    grid-column:2 !important;
+    width:320px !important;
+    min-width:320px !important;
+    max-width:320px !important;
   }
 
   .cash-bank-layout > .card:last-child{
-    grid-column:2 !important;
+    grid-column:1 !important;
     width:100% !important;
     min-width:0 !important;
     max-width:none !important;
@@ -1096,6 +1096,7 @@ a{color:inherit;text-decoration:none}
   }
 
   .cash-bank-layout > .card:last-child .table{
+    min-width:unset !important;
     table-layout:auto !important;
   }
 }
