@@ -423,16 +423,22 @@ export function AppShell() {
           <div className="stat-value">{currency(metrics.bank)}</div>
           <div className="stat-hint">含帳戶收入支出與移轉</div>
         </div>
-        <div className="card stat">
+        <div className="card stat stat-total">
           <div className="stat-title">總資金</div>
           <div className="stat-value">{currency(metrics.total)}</div>
           <div className="stat-hint">現金 + 銀行</div>
         </div>
-        <div className="card stat">
-          <div className="stat-title">本期淨額</div>
-          <div className="stat-value">{currency(metrics.net)}</div>
-          <div className="stat-hint">
-            收入 {currency(metrics.incomeTotal)} / 支出 {currency(metrics.expenseTotal)}
+        <div className="card stat stat-compare">
+          <div className="stat-title">本期收入 / 本期支出</div>
+          <div className="stat-split">
+            <div className="stat-split-item stat-income">
+              <div className="stat-split-label">收入</div>
+              <div className="stat-split-value">{currency(metrics.incomeTotal)}</div>
+            </div>
+            <div className="stat-split-item stat-expense">
+              <div className="stat-split-label">支出</div>
+              <div className="stat-split-value">{currency(metrics.expenseTotal)}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -603,12 +609,6 @@ export function AppShell() {
           {tab === "cash" && (
             <div className="section two-col">
               <div className="card">
-                <div className="section-head"><div className="section-title">現金帳明細</div></div>
-                <div className="section-content table-wrap">
-                  <TransactionTable rows={cashRows} onEdit={openEditModal} onDelete={deleteTransaction} />
-                </div>
-              </div>
-              <div className="card">
                 <div className="section-head"><div className="section-title">現金帳摘要</div></div>
                 <div className="section-content">
                   <SummaryList items={[
@@ -619,17 +619,17 @@ export function AppShell() {
                   ]} />
                 </div>
               </div>
+              <div className="card">
+                <div className="section-head"><div className="section-title">現金帳明細</div></div>
+                <div className="section-content table-wrap">
+                  <TransactionTable rows={cashRows} onEdit={openEditModal} onDelete={deleteTransaction} />
+                </div>
+              </div>
             </div>
           )}
 
           {tab === "bank" && (
             <div className="section two-col">
-              <div className="card">
-                <div className="section-head"><div className="section-title">銀行帳明細</div></div>
-                <div className="section-content table-wrap">
-                  <TransactionTable rows={bankRows} onEdit={openEditModal} onDelete={deleteTransaction} />
-                </div>
-              </div>
               <div className="card">
                 <div className="section-head"><div className="section-title">銀行帳摘要</div></div>
                 <div className="section-content">
@@ -639,6 +639,12 @@ export function AppShell() {
                     ["現金存入", currency(summary.cashToBank)],
                     ["提款轉現金", currency(summary.bankToCash)]
                   ]} />
+                </div>
+              </div>
+              <div className="card">
+                <div className="section-head"><div className="section-title">銀行帳明細</div></div>
+                <div className="section-content table-wrap">
+                  <TransactionTable rows={bankRows} onEdit={openEditModal} onDelete={deleteTransaction} />
                 </div>
               </div>
             </div>
@@ -871,28 +877,39 @@ function TransactionTable({
               <th>類型</th>
               <th>帳別</th>
               <th>分類</th>
-              <th>金額</th>
+              <th>收入</th>
+              <th>支出</th>
               <th>備註</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((tx) => (
-              <tr key={tx.id}>
-                <td>{tx.date}</td>
-                <td><span className="badge">{typeLabel(tx.type)}</span></td>
-                <td>{accountLabel(tx.account)}</td>
-                <td>{tx.category}</td>
-                <td><strong>{currency(tx.amount)}</strong></td>
-                <td className="muted">{tx.note ?? ""}</td>
-                <td>
-                  <div className="mini-actions">
-                    <button className="btn-outline" onClick={() => onEdit(tx)}>編輯</button>
-                    <button className="btn-danger" onClick={() => onDelete(tx.id)}>刪除</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {rows.map((tx) => {
+              const incomeText = tx.type === "income" ? currency(tx.amount) : "-";
+              const expenseText = tx.type === "expense" ? currency(tx.amount) : "-";
+
+              return (
+                <tr key={tx.id}>
+                  <td>{tx.date}</td>
+                  <td><span className="badge">{typeLabel(tx.type)}</span></td>
+                  <td>{accountLabel(tx.account)}</td>
+                  <td>{tx.category}</td>
+                  <td className={tx.type === "income" ? "money-income" : "money-dash"}>
+                    <strong>{incomeText}</strong>
+                  </td>
+                  <td className={tx.type === "expense" ? "money-expense" : "money-dash"}>
+                    <strong>{expenseText}</strong>
+                  </td>
+                  <td className="muted">{tx.note ?? ""}</td>
+                  <td>
+                    <div className="mini-actions">
+                      <button className="btn-outline" onClick={() => onEdit(tx)}>編輯</button>
+                      <button className="btn-danger" onClick={() => onDelete(tx.id)}>刪除</button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -910,7 +927,24 @@ function TransactionTable({
                 <div className="mobile-tx-category">{tx.category}</div>
                 <div className="mobile-tx-meta">{accountLabel(tx.account)}</div>
               </div>
-              <div className="mobile-tx-amount">{currency(tx.amount)}</div>
+              <div className={tx.type === "income" ? "mobile-tx-amount money-income" : tx.type === "expense" ? "mobile-tx-amount money-expense" : "mobile-tx-amount"}>
+                {currency(tx.amount)}
+              </div>
+            </div>
+
+            <div className="mobile-tx-income-expense">
+              <div className="mobile-money-box mobile-money-income">
+                <div className="mobile-money-label">收入</div>
+                <div className="mobile-money-value">
+                  {tx.type === "income" ? currency(tx.amount) : "-"}
+                </div>
+              </div>
+              <div className="mobile-money-box mobile-money-expense">
+                <div className="mobile-money-label">支出</div>
+                <div className="mobile-money-value">
+                  {tx.type === "expense" ? currency(tx.amount) : "-"}
+                </div>
+              </div>
             </div>
 
             {tx.note ? <div className="mobile-tx-note">{tx.note}</div> : null}

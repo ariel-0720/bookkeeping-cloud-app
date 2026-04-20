@@ -923,3 +923,129 @@ a{color:inherit;text-decoration:none}
     gap:18px !important;
   }
 }
+
+
+.stat-total .stat-value{
+  font-weight: 900;
+}
+
+.stat-compare{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.stat-split{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+.stat-split-item{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  background:var(--soft);
+}
+
+.stat-split-label{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.stat-split-value{
+  margin-top:6px;
+  font-size:20px;
+  font-weight:800;
+  line-height:1.15;
+}
+
+.stat-income{
+  background:#ecfdf5;
+  border-color:#a7f3d0;
+}
+
+.stat-expense{
+  background:#fef2f2;
+  border-color:#fecaca;
+}
+
+@media (max-width: 720px){
+  .stat-split{
+    gap:8px;
+  }
+
+  .stat-split-item{
+    padding:10px;
+    border-radius:14px;
+  }
+
+  .stat-split-value{
+    font-size:18px;
+  }
+}
+
+
+.money-income{
+  color:#065f46;
+}
+
+.money-expense{
+  color:#b91c1c;
+}
+
+.money-dash{
+  color:#94a3b8;
+}
+
+.mobile-tx-income-expense{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+.mobile-money-box{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+}
+
+.mobile-money-label{
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+}
+
+.mobile-money-value{
+  margin-top:6px;
+  font-size:16px;
+  font-weight:800;
+  line-height:1.2;
+}
+
+.mobile-money-income{
+  background:#ecfdf5;
+  border-color:#a7f3d0;
+}
+
+.mobile-money-expense{
+  background:#fef2f2;
+  border-color:#fecaca;
+}
+
+@media (max-width: 720px){
+  .mobile-tx-income-expense{
+    gap:8px;
+  }
+
+  .mobile-money-box{
+    padding:9px;
+  }
+
+  .mobile-money-value{
+    font-size:15px;
+  }
+}
