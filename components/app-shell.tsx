@@ -423,22 +423,16 @@ export function AppShell() {
           <div className="stat-value">{currency(metrics.bank)}</div>
           <div className="stat-hint">含帳戶收入支出與移轉</div>
         </div>
-        <div className="card stat stat-total">
+        <div className="card stat">
           <div className="stat-title">總資金</div>
           <div className="stat-value">{currency(metrics.total)}</div>
           <div className="stat-hint">現金 + 銀行</div>
         </div>
-        <div className="card stat stat-compare">
-          <div className="stat-title">本期收入 / 本期支出</div>
-          <div className="stat-split">
-            <div className="stat-split-item stat-income">
-              <div className="stat-split-label">收入</div>
-              <div className="stat-split-value">{currency(metrics.incomeTotal)}</div>
-            </div>
-            <div className="stat-split-item stat-expense">
-              <div className="stat-split-label">支出</div>
-              <div className="stat-split-value">{currency(metrics.expenseTotal)}</div>
-            </div>
+        <div className="card stat">
+          <div className="stat-title">本期淨額</div>
+          <div className="stat-value">{currency(metrics.net)}</div>
+          <div className="stat-hint">
+            收入 {currency(metrics.incomeTotal)} / 支出 {currency(metrics.expenseTotal)}
           </div>
         </div>
       </div>
@@ -596,37 +590,18 @@ export function AppShell() {
           </div>
 
           {tab === "dashboard" && (
-            <div className="section dashboard-split">
-              <div className="card section">
-                <div className="section-head">
-                  <div className="section-title">收入列表</div>
-                </div>
-                <div className="section-content table-wrap">
-                  <CompactTransactionTable
-                    rows={filteredTransactions.filter((tx) => tx.type === "income")}
-                    onEdit={openEditModal}
-                    onDelete={deleteTransaction}
-                  />
-                </div>
+            <div className="card section">
+              <div className="section-head">
+                <div className="section-title">交易列表</div>
               </div>
-
-              <div className="card section">
-                <div className="section-head">
-                  <div className="section-title">支出列表</div>
-                </div>
-                <div className="section-content table-wrap">
-                  <CompactTransactionTable
-                    rows={filteredTransactions.filter((tx) => tx.type === "expense")}
-                    onEdit={openEditModal}
-                    onDelete={deleteTransaction}
-                  />
-                </div>
+              <div className="section-content table-wrap">
+                <TransactionTable rows={filteredTransactions} onEdit={openEditModal} onDelete={deleteTransaction} />
               </div>
             </div>
           )}
 
           {tab === "cash" && (
-            <div className="section two-col detail-wide">
+            <div className="section two-col">
               <div className="card">
                 <div className="section-head"><div className="section-title">現金帳摘要</div></div>
                 <div className="section-content">
@@ -648,7 +623,7 @@ export function AppShell() {
           )}
 
           {tab === "bank" && (
-            <div className="section two-col detail-wide">
+            <div className="section two-col">
               <div className="card">
                 <div className="section-head"><div className="section-title">銀行帳摘要</div></div>
                 <div className="section-content">
@@ -873,60 +848,6 @@ function SummaryList({ items }: { items: [string, string][] }) {
   );
 }
 
-
-function CompactTransactionTable({
-  rows,
-  onEdit,
-  onDelete
-}: {
-  rows: TransactionRow[];
-  onEdit: (tx: TransactionRow) => void;
-  onDelete: (id: string) => void;
-}) {
-  if (!rows.length) {
-    return <div className="empty">目前沒有符合條件的資料</div>;
-  }
-
-  return (
-    <div className="dashboard-compact-wrap">
-      <table className="table dashboard-compact-table">
-        <thead>
-          <tr>
-            <th>日期</th>
-            <th>帳別</th>
-            <th>分類</th>
-            <th>金額</th>
-            <th>備註</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((tx) => {
-            const shortDate = tx.date.slice(5).replace("-", "/");
-            return (
-              <tr key={tx.id}>
-                <td>{shortDate}</td>
-                <td>{accountLabel(tx.account)}</td>
-                <td>{tx.category}</td>
-                <td className={tx.type === "income" ? "money-income" : "money-expense"}>
-                  <strong>{currency(tx.amount)}</strong>
-                </td>
-                <td className="muted compact-note-cell">{tx.note ?? ""}</td>
-                <td>
-                  <div className="mini-actions compact-actions">
-                    <button className="btn-outline compact-btn icon-btn" aria-label="編輯" title="編輯" onClick={() => onEdit(tx)}>✎</button>
-                    <button className="btn-danger compact-btn icon-btn" aria-label="刪除" title="刪除" onClick={() => onDelete(tx.id)}>✕</button>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 function TransactionTable({
   rows,
   onEdit,
@@ -962,9 +883,7 @@ function TransactionTable({
                 <td><span className="badge">{typeLabel(tx.type)}</span></td>
                 <td>{accountLabel(tx.account)}</td>
                 <td>{tx.category}</td>
-                <td className={tx.type === "income" ? "money-income" : tx.type === "expense" ? "money-expense" : ""}>
-                  <strong>{currency(tx.amount)}</strong>
-                </td>
+                <td><strong>{currency(tx.amount)}</strong></td>
                 <td className="muted">{tx.note ?? ""}</td>
                 <td>
                   <div className="mini-actions">
@@ -991,9 +910,7 @@ function TransactionTable({
                 <div className="mobile-tx-category">{tx.category}</div>
                 <div className="mobile-tx-meta">{accountLabel(tx.account)}</div>
               </div>
-              <div className={tx.type === "income" ? "mobile-tx-amount money-income" : tx.type === "expense" ? "mobile-tx-amount money-expense" : "mobile-tx-amount"}>
-                {currency(tx.amount)}
-              </div>
+              <div className="mobile-tx-amount">{currency(tx.amount)}</div>
             </div>
 
             {tx.note ? <div className="mobile-tx-note">{tx.note}</div> : null}
