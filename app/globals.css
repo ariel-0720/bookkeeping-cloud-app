@@ -1053,3 +1053,65 @@ a{color:inherit;text-decoration:none}
     max-width: 100% !important;
   }
 }
+
+
+/* Rebuild cash/bank desktop layout only */
+@media (min-width: 721px){
+  .cash-bank-layout{
+    display:grid !important;
+    grid-template-columns: 300px minmax(0, 1fr) !important;
+    gap:18px !important;
+    align-items:start !important;
+    width:100% !important;
+  }
+
+  .cash-bank-layout > .card{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    margin:0 !important;
+    justify-self:stretch !important;
+  }
+
+  .cash-bank-layout > .card:first-child{
+    width:300px !important;
+    min-width:300px !important;
+    max-width:300px !important;
+    grid-column:1 !important;
+  }
+
+  .cash-bank-layout > .card:last-child{
+    grid-column:2 !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+  }
+
+  .cash-bank-layout > .card:last-child .section-content,
+  .cash-bank-layout > .card:last-child .table-wrap,
+  .cash-bank-layout > .card:last-child .desktop-table,
+  .cash-bank-layout > .card:last-child table{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .cash-bank-layout > .card:last-child .table{
+    table-layout:auto !important;
+  }
+}
+
+@media (max-width: 720px){
+  .cash-bank-layout{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:16px !important;
+  }
+
+  .cash-bank-layout > .card:first-child,
+  .cash-bank-layout > .card:last-child{
+    grid-column:auto !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+  }
+}
