@@ -1017,3 +1017,39 @@ a{color:inherit;text-decoration:none}
     max-width: 100% !important;
   }
 }
+
+
+/* FINAL override: cash/bank summary narrow, detail fills remaining width */
+@media (min-width: 721px){
+  .detail-wide{
+    display: grid !important;
+    grid-template-columns: 320px minmax(0, 1fr) !important;
+    gap: 16px !important;
+    width: 100% !important;
+    align-items: start !important;
+  }
+
+  .detail-wide > .card{
+    margin: 0 !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    width: auto !important;
+  }
+
+  .detail-wide > .card:first-child{
+    width: 320px !important;
+  }
+
+  .detail-wide > .card:last-child{
+    width: auto !important;
+    justify-self: stretch !important;
+  }
+
+  .detail-wide > .card:last-child .section-content,
+  .detail-wide > .card:last-child .table-wrap,
+  .detail-wide > .card:last-child .desktop-table,
+  .detail-wide > .card:last-child table{
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
