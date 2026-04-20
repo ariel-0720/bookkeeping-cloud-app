@@ -602,7 +602,7 @@ export function AppShell() {
                   <div className="section-title">收入列表</div>
                 </div>
                 <div className="section-content table-wrap">
-                  <TransactionTable
+                  <CompactTransactionTable
                     rows={filteredTransactions.filter((tx) => tx.type === "income")}
                     onEdit={openEditModal}
                     onDelete={deleteTransaction}
@@ -615,7 +615,7 @@ export function AppShell() {
                   <div className="section-title">支出列表</div>
                 </div>
                 <div className="section-content table-wrap">
-                  <TransactionTable
+                  <CompactTransactionTable
                     rows={filteredTransactions.filter((tx) => tx.type === "expense")}
                     onEdit={openEditModal}
                     onDelete={deleteTransaction}
@@ -869,6 +869,57 @@ function SummaryList({ items }: { items: [string, string][] }) {
           <strong>{value}</strong>
         </div>
       ))}
+    </div>
+  );
+}
+
+
+function CompactTransactionTable({
+  rows,
+  onEdit,
+  onDelete
+}: {
+  rows: TransactionRow[];
+  onEdit: (tx: TransactionRow) => void;
+  onDelete: (id: string) => void;
+}) {
+  if (!rows.length) {
+    return <div className="empty">目前沒有符合條件的資料</div>;
+  }
+
+  return (
+    <div className="dashboard-compact-wrap">
+      <table className="table dashboard-compact-table">
+        <thead>
+          <tr>
+            <th>日期</th>
+            <th>帳別</th>
+            <th>分類</th>
+            <th>金額</th>
+            <th>備註</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((tx) => (
+            <tr key={tx.id}>
+              <td>{tx.date}</td>
+              <td>{accountLabel(tx.account)}</td>
+              <td>{tx.category}</td>
+              <td className={tx.type === "income" ? "money-income" : "money-expense"}>
+                <strong>{currency(tx.amount)}</strong>
+              </td>
+              <td className="muted compact-note-cell">{tx.note ?? ""}</td>
+              <td>
+                <div className="mini-actions compact-actions">
+                  <button className="btn-outline compact-btn" onClick={() => onEdit(tx)}>編輯</button>
+                  <button className="btn-danger compact-btn" onClick={() => onDelete(tx.id)}>刪除</button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -1113,3 +1113,70 @@ a{color:inherit;text-decoration:none}
 .desktop-table .table td{
   white-space:nowrap;
 }
+
+
+/* Dashboard half-width lists without horizontal scrolling */
+.dashboard-compact-wrap{
+  width:100%;
+  overflow-x:hidden;
+}
+
+.dashboard-compact-table{
+  width:100%;
+  table-layout:fixed;
+}
+
+.dashboard-compact-table th,
+.dashboard-compact-table td{
+  padding:10px 8px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size:14px;
+}
+
+.dashboard-compact-table th:nth-child(1),
+.dashboard-compact-table td:nth-child(1){ width:20%; }
+
+.dashboard-compact-table th:nth-child(2),
+.dashboard-compact-table td:nth-child(2){ width:12%; }
+
+.dashboard-compact-table th:nth-child(3),
+.dashboard-compact-table td:nth-child(3){ width:14%; }
+
+.dashboard-compact-table th:nth-child(4),
+.dashboard-compact-table td:nth-child(4){ width:16%; }
+
+.dashboard-compact-table th:nth-child(5),
+.dashboard-compact-table td:nth-child(5){ width:20%; }
+
+.dashboard-compact-table th:nth-child(6),
+.dashboard-compact-table td:nth-child(6){ width:18%; }
+
+.compact-note-cell{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.compact-actions{
+  gap:6px;
+}
+
+.compact-btn{
+  padding:6px 8px;
+  min-width:0;
+}
+
+@media (max-width: 720px){
+  .dashboard-split{
+    grid-template-columns:1fr;
+  }
+
+  .dashboard-compact-wrap{
+    overflow-x:auto;
+  }
+
+  .dashboard-compact-table{
+    min-width:620px;
+  }
+}
