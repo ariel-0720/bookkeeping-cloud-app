@@ -923,3 +923,34 @@ a{color:inherit;text-decoration:none}
     gap:18px !important;
   }
 }
+
+
+.money-income{
+  color:#065f46;
+}
+
+.money-expense{
+  color:#b91c1c;
+}
+
+.stat-income-expense-card{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.stat-hint-row{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:12px;
+  font-size:16px;
+  font-weight:700;
+}
+
+@media (max-width: 720px){
+  .stat-hint-row{
+    font-size:14px;
+    gap:6px;
+  }
+}

@@ -428,11 +428,11 @@ export function AppShell() {
           <div className="stat-value">{currency(metrics.total)}</div>
           <div className="stat-hint">現金 + 銀行</div>
         </div>
-        <div className="card stat">
-          <div className="stat-title">本期淨額</div>
-          <div className="stat-value">{currency(metrics.net)}</div>
-          <div className="stat-hint">
-            收入 {currency(metrics.incomeTotal)} / 支出 {currency(metrics.expenseTotal)}
+        <div className="card stat stat-income-expense-card">
+          <div className="stat-title">收入 / 支出</div>
+          <div className="stat-hint-row">
+            <span className="money-income">收入 {currency(metrics.incomeTotal)}</span>
+            <span className="money-expense">支出 {currency(metrics.expenseTotal)}</span>
           </div>
         </div>
       </div>
@@ -883,7 +883,9 @@ function TransactionTable({
                 <td><span className="badge">{typeLabel(tx.type)}</span></td>
                 <td>{accountLabel(tx.account)}</td>
                 <td>{tx.category}</td>
-                <td><strong>{currency(tx.amount)}</strong></td>
+                <td className={tx.type === "income" ? "money-income" : tx.type === "expense" ? "money-expense" : ""}>
+                  <strong>{currency(tx.amount)}</strong>
+                </td>
                 <td className="muted">{tx.note ?? ""}</td>
                 <td>
                   <div className="mini-actions">
