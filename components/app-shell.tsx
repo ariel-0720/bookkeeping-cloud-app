@@ -601,7 +601,7 @@ export function AppShell() {
           )}
 
           {tab === "cash" && (
-            <div className="section two-col">
+            <div className="section two-col detail-wide">
               <div className="card">
                 <div className="section-head"><div className="section-title">現金帳摘要</div></div>
                 <div className="section-content">
@@ -623,7 +623,7 @@ export function AppShell() {
           )}
 
           {tab === "bank" && (
-            <div className="section two-col">
+            <div className="section two-col detail-wide">
               <div className="card">
                 <div className="section-head"><div className="section-title">銀行帳摘要</div></div>
                 <div className="section-content">

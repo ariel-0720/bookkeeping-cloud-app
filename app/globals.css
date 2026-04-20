@@ -954,3 +954,30 @@ a{color:inherit;text-decoration:none}
     gap:6px;
   }
 }
+
+
+/* Cash / bank pages: keep position, swap visual weight only on desktop */
+@media (min-width: 721px){
+  .detail-wide{
+    display:grid;
+    grid-template-columns:minmax(230px, 0.72fr) minmax(0, 1.55fr) !important;
+    gap:18px !important;
+    align-items:start;
+  }
+
+  .detail-wide > .card:first-child{
+    max-width:320px;
+    min-width:230px;
+  }
+
+  .detail-wide > .card:last-child{
+    min-width:0;
+    width:100%;
+  }
+
+  .detail-wide > .card:last-child .table-wrap,
+  .detail-wide > .card:last-child .desktop-table,
+  .detail-wide > .card:last-child .table{
+    width:100%;
+  }
+}
