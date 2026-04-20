@@ -912,7 +912,7 @@ function TransactionTable({
                 <div className="mobile-tx-category">{tx.category}</div>
                 <div className="mobile-tx-meta">{accountLabel(tx.account)}</div>
               </div>
-              <div className="mobile-tx-amount">{currency(tx.amount)}</div>
+              <div className={tx.type === "income" ? "mobile-tx-amount money-income" : tx.type === "expense" ? "mobile-tx-amount money-expense" : "mobile-tx-amount"}>{currency(tx.amount)}</div>
             </div>
 
             {tx.note ? <div className="mobile-tx-note">{tx.note}</div> : null}
