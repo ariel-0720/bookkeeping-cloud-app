@@ -1080,3 +1080,36 @@ a{color:inherit;text-decoration:none}
     min-width:0;
   }
 }
+
+
+/* Make cash/bank detail area truly wider on desktop */
+@media (min-width: 721px){
+  .detail-wide{
+    display:grid;
+    grid-template-columns:minmax(260px, 320px) minmax(0, 1fr) !important;
+    gap:18px !important;
+    align-items:start;
+  }
+
+  .detail-wide > .card{
+    width:100%;
+    max-width:none;
+    min-width:0;
+  }
+
+  .detail-wide > .card:last-child .table-wrap,
+  .detail-wide > .card:last-child .desktop-table,
+  .detail-wide > .card:last-child .table{
+    width:100%;
+  }
+}
+
+/* Narrower desktop list after amount column simplification */
+.desktop-table .table{
+  width:100%;
+}
+
+.desktop-table .table th,
+.desktop-table .table td{
+  white-space:nowrap;
+}

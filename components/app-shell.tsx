@@ -896,39 +896,30 @@ function TransactionTable({
               <th>類型</th>
               <th>帳別</th>
               <th>分類</th>
-              <th>收入</th>
-              <th>支出</th>
+              <th>金額</th>
               <th>備註</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((tx) => {
-              const incomeText = tx.type === "income" ? currency(tx.amount) : "-";
-              const expenseText = tx.type === "expense" ? currency(tx.amount) : "-";
-
-              return (
-                <tr key={tx.id}>
-                  <td>{tx.date}</td>
-                  <td><span className="badge">{typeLabel(tx.type)}</span></td>
-                  <td>{accountLabel(tx.account)}</td>
-                  <td>{tx.category}</td>
-                  <td className={tx.type === "income" ? "money-income" : "money-dash"}>
-                    <strong>{incomeText}</strong>
-                  </td>
-                  <td className={tx.type === "expense" ? "money-expense" : "money-dash"}>
-                    <strong>{expenseText}</strong>
-                  </td>
-                  <td className="muted">{tx.note ?? ""}</td>
-                  <td>
-                    <div className="mini-actions">
-                      <button className="btn-outline" onClick={() => onEdit(tx)}>編輯</button>
-                      <button className="btn-danger" onClick={() => onDelete(tx.id)}>刪除</button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {rows.map((tx) => (
+              <tr key={tx.id}>
+                <td>{tx.date}</td>
+                <td><span className="badge">{typeLabel(tx.type)}</span></td>
+                <td>{accountLabel(tx.account)}</td>
+                <td>{tx.category}</td>
+                <td className={tx.type === "income" ? "money-income" : tx.type === "expense" ? "money-expense" : ""}>
+                  <strong>{currency(tx.amount)}</strong>
+                </td>
+                <td className="muted">{tx.note ?? ""}</td>
+                <td>
+                  <div className="mini-actions">
+                    <button className="btn-outline" onClick={() => onEdit(tx)}>編輯</button>
+                    <button className="btn-danger" onClick={() => onDelete(tx.id)}>刪除</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -948,21 +939,6 @@ function TransactionTable({
               </div>
               <div className={tx.type === "income" ? "mobile-tx-amount money-income" : tx.type === "expense" ? "mobile-tx-amount money-expense" : "mobile-tx-amount"}>
                 {currency(tx.amount)}
-              </div>
-            </div>
-
-            <div className="mobile-tx-income-expense">
-              <div className="mobile-money-box mobile-money-income">
-                <div className="mobile-money-label">收入</div>
-                <div className="mobile-money-value">
-                  {tx.type === "income" ? currency(tx.amount) : "-"}
-                </div>
-              </div>
-              <div className="mobile-money-box mobile-money-expense">
-                <div className="mobile-money-label">支出</div>
-                <div className="mobile-money-value">
-                  {tx.type === "expense" ? currency(tx.amount) : "-"}
-                </div>
               </div>
             </div>
 
