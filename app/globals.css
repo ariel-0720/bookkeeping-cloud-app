@@ -981,3 +981,39 @@ a{color:inherit;text-decoration:none}
     width:100%;
   }
 }
+
+
+/* Fix cash/bank two-column layout gap on desktop */
+@media (min-width: 721px){
+  .detail-wide{
+    display:grid !important;
+    grid-template-columns: 300px minmax(0, 1fr) !important;
+    gap: 18px !important;
+    align-items: start !important;
+    width: 100% !important;
+  }
+
+  .detail-wide > .card{
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .detail-wide > .card:first-child{
+    width: 300px !important;
+  }
+
+  .detail-wide > .card:last-child{
+    width: auto !important;
+    justify-self: stretch !important;
+  }
+
+  .detail-wide > .card:last-child .section-content,
+  .detail-wide > .card:last-child .table-wrap,
+  .detail-wide > .card:last-child .desktop-table,
+  .detail-wide > .card:last-child table{
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
