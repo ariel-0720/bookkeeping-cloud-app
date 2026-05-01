@@ -714,12 +714,12 @@ export function AppShell() {
 
                   <div className="mobile-report-list" style={{ marginTop: 16 }}>
                     {[
-                      ["現金收入", currency(summary.cashIncome), "只計現金帳收入"],
-                      ["現金支出", currency(summary.cashExpense), "只計現金帳支出"],
-                      ["銀行收入", currency(summary.bankIncome), "只計銀行帳收入"],
-                      ["銀行支出", currency(summary.bankExpense), "只計銀行帳支出"],
-                      ["現金存入銀行", currency(summary.cashToBank), "帳戶間移轉，不列入總收入"],
-                      ["銀行提款轉現金", currency(summary.bankToCash), "帳戶間移轉，不列入總收入"],
+                      ["現金收入", currency(reportSummary.cashIncome), "只計現金帳收入"],
+                      ["現金支出", currency(reportSummary.cashExpense), "只計現金帳支出"],
+                      ["銀行收入", currency(reportSummary.bankIncome), "只計銀行帳收入"],
+                      ["銀行支出", currency(reportSummary.bankExpense), "只計銀行帳支出"],
+                      ["現金存入銀行", currency(reportSummary.cashToBank), "帳戶間移轉，不列入總收入"],
+                      ["銀行提款轉現金", currency(reportSummary.bankToCash), "帳戶間移轉，不列入總收入"],
                       ["現金結餘", currency(runningMetrics.cash), "目前現金"],
                       ["銀行結餘", currency(runningMetrics.bank), "目前銀行"],
                       ["總資金", currency(runningMetrics.total), "現金 + 銀行合計"]
