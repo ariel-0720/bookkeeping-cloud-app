@@ -343,11 +343,17 @@ export function AppShell() {
     });
   }, [transactions, filters]);
 
-  const metrics = useMemo(() => {
+  const runningMetrics = useMemo(() => {
+    return getMetrics(transactions, settings?.opening_cash ?? 0, settings?.opening_bank ?? 0);
+  }, [transactions, settings]);
+
+  const runningSummary = useMemo(() => getSummaryRows(transactions), [transactions]);
+
+  const reportMetrics = useMemo(() => {
     return getMetrics(reportFilteredTransactions, settings?.opening_cash ?? 0, settings?.opening_bank ?? 0);
   }, [reportFilteredTransactions, settings]);
 
-  const summary = useMemo(() => getSummaryRows(reportFilteredTransactions), [reportFilteredTransactions]);
+  const reportSummary = useMemo(() => getSummaryRows(reportFilteredTransactions), [reportFilteredTransactions]);
 
   const cashRows = filteredTransactions.filter((tx) => ["cash", "cash_to_bank", "bank_to_cash"].includes(tx.account));
   const bankRows = filteredTransactions.filter((tx) => ["bank", "cash_to_bank", "bank_to_cash"].includes(tx.account));
@@ -369,15 +375,15 @@ export function AppShell() {
     const rows = [
       ["報表類型", reportTitle, ""],
       ["項目", "金額", "說明"],
-      ["現金收入", summary.cashIncome, "只計現金帳收入"],
-      ["現金支出", summary.cashExpense, "只計現金帳支出"],
-      ["銀行收入", summary.bankIncome, "只計銀行帳收入"],
-      ["銀行支出", summary.bankExpense, "只計銀行帳支出"],
-      ["現金存入銀行", summary.cashToBank, "帳戶間移轉"],
-      ["銀行提款轉現金", summary.bankToCash, "帳戶間移轉"],
-      ["現金結餘", metrics.cash, "目前現金"],
-      ["銀行結餘", metrics.bank, "目前銀行"],
-      ["總資金", metrics.total, "現金 + 銀行"]
+      ["現金收入", reportSummary.cashIncome, "只計現金帳收入"],
+      ["現金支出", reportSummary.cashExpense, "只計現金帳支出"],
+      ["銀行收入", reportSummary.bankIncome, "只計銀行帳收入"],
+      ["銀行支出", reportSummary.bankExpense, "只計銀行帳支出"],
+      ["現金存入銀行", reportSummary.cashToBank, "帳戶間移轉"],
+      ["銀行提款轉現金", reportSummary.bankToCash, "帳戶間移轉"],
+      ["現金結餘", runningMetrics.cash, "目前現金"],
+      ["銀行結餘", runningMetrics.bank, "目前銀行"],
+      ["總資金", runningMetrics.total, "現金 + 銀行"]
     ];
     downloadCsv("週報表.csv", rows);
   }
@@ -415,24 +421,24 @@ export function AppShell() {
       <div className="grid-4">
         <div className="card stat">
           <div className="stat-title">現金結餘</div>
-          <div className="stat-value">{currency(metrics.cash)}</div>
+          <div className="stat-value">{currency(runningMetrics.cash)}</div>
           <div className="stat-hint">含現金收支與轉帳影響</div>
         </div>
         <div className="card stat">
           <div className="stat-title">銀行結餘</div>
-          <div className="stat-value">{currency(metrics.bank)}</div>
+          <div className="stat-value">{currency(runningMetrics.bank)}</div>
           <div className="stat-hint">含帳戶收入支出與移轉</div>
         </div>
         <div className="card stat">
           <div className="stat-title">總資金</div>
-          <div className="stat-value">{currency(metrics.total)}</div>
+          <div className="stat-value">{currency(runningMetrics.total)}</div>
           <div className="stat-hint">現金 + 銀行</div>
         </div>
         <div className="card stat stat-income-expense-card">
           <div className="stat-title">收入 / 支出</div>
           <div className="stat-hint-row">
-            <span className="money-income">收入 {currency(metrics.incomeTotal)}</span>
-            <span className="money-expense">支出 {currency(metrics.expenseTotal)}</span>
+            <span className="money-income">收入 {currency(runningMetrics.incomeTotal)}</span>
+            <span className="money-expense">支出 {currency(runningMetrics.expenseTotal)}</span>
           </div>
         </div>
       </div>
@@ -586,7 +592,7 @@ export function AppShell() {
             <button className={`tab ${tab === "dashboard" ? "active" : ""}`} onClick={() => setTab("dashboard")}>首頁</button>
             <button className={`tab ${tab === "cash" ? "active" : ""}`} onClick={() => setTab("cash")}>現金帳</button>
             <button className={`tab ${tab === "bank" ? "active" : ""}`} onClick={() => setTab("bank")}>銀行帳</button>
-            <button className={`tab ${tab === "report" ? "active" : ""}`} onClick={() => setTab("report")}>週報</button>
+            <button className={`tab ${tab === "report" ? "active" : ""}`} onClick={() => setTab("report")}>報表</button>
           </div>
 
           {tab === "dashboard" && (
@@ -607,9 +613,9 @@ export function AppShell() {
                 <div className="section-content">
                   <SummaryList items={[
                     ["期初現金", currency(settings?.opening_cash ?? 0)],
-                    ["目前現金", currency(metrics.cash)],
-                    ["轉入銀行", currency(summary.cashToBank)],
-                    ["銀行轉現金", currency(summary.bankToCash)]
+                    ["目前現金", currency(runningMetrics.cash)],
+                    ["轉入銀行", currency(runningSummary.cashToBank)],
+                    ["銀行轉現金", currency(runningSummary.bankToCash)]
                   ]} />
                 </div>
               </div>
@@ -629,9 +635,9 @@ export function AppShell() {
                 <div className="section-content">
                   <SummaryList items={[
                     ["期初銀行", currency(settings?.opening_bank ?? 0)],
-                    ["目前銀行", currency(metrics.bank)],
-                    ["現金存入", currency(summary.cashToBank)],
-                    ["提款轉現金", currency(summary.bankToCash)]
+                    ["目前銀行", currency(runningMetrics.bank)],
+                    ["現金存入", currency(runningSummary.cashToBank)],
+                    ["提款轉現金", currency(runningSummary.bankToCash)]
                   ]} />
                 </div>
               </div>
@@ -692,15 +698,15 @@ export function AppShell() {
                           </tr>
                         </thead>
                         <tbody>
-                          <tr><td>現金收入</td><td><strong>{currency(summary.cashIncome)}</strong></td><td className="muted">只計現金帳收入</td></tr>
-                          <tr><td>現金支出</td><td><strong>{currency(summary.cashExpense)}</strong></td><td className="muted">只計現金帳支出</td></tr>
-                          <tr><td>銀行收入</td><td><strong>{currency(summary.bankIncome)}</strong></td><td className="muted">只計銀行帳收入</td></tr>
-                          <tr><td>銀行支出</td><td><strong>{currency(summary.bankExpense)}</strong></td><td className="muted">只計銀行帳支出</td></tr>
-                          <tr><td>現金存入銀行</td><td><strong>{currency(summary.cashToBank)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
-                          <tr><td>銀行提款轉現金</td><td><strong>{currency(summary.bankToCash)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
-                          <tr><td>現金結餘</td><td><strong>{currency(metrics.cash)}</strong></td><td className="muted">目前現金</td></tr>
-                          <tr><td>銀行結餘</td><td><strong>{currency(metrics.bank)}</strong></td><td className="muted">目前銀行</td></tr>
-                          <tr><td><strong>總資金</strong></td><td><strong>{currency(metrics.total)}</strong></td><td className="muted">現金 + 銀行合計</td></tr>
+                          <tr><td>現金收入</td><td><strong>{currency(reportSummary.cashIncome)}</strong></td><td className="muted">只計現金帳收入</td></tr>
+                          <tr><td>現金支出</td><td><strong>{currency(reportSummary.cashExpense)}</strong></td><td className="muted">只計現金帳支出</td></tr>
+                          <tr><td>銀行收入</td><td><strong>{currency(reportSummary.bankIncome)}</strong></td><td className="muted">只計銀行帳收入</td></tr>
+                          <tr><td>銀行支出</td><td><strong>{currency(reportSummary.bankExpense)}</strong></td><td className="muted">只計銀行帳支出</td></tr>
+                          <tr><td>現金存入銀行</td><td><strong>{currency(reportSummary.cashToBank)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
+                          <tr><td>銀行提款轉現金</td><td><strong>{currency(reportSummary.bankToCash)}</strong></td><td className="muted">帳戶間移轉，不列入總收入</td></tr>
+                          <tr><td>現金結餘</td><td><strong>{currency(reportMetrics.cash)}</strong></td><td className="muted">目前現金</td></tr>
+                          <tr><td>銀行結餘</td><td><strong>{currency(reportMetrics.bank)}</strong></td><td className="muted">目前銀行</td></tr>
+                          <tr><td><strong>總資金</strong></td><td><strong>{currency(reportMetrics.total)}</strong></td><td className="muted">現金 + 銀行合計</td></tr>
                         </tbody>
                       </table>
                     </div>
@@ -714,9 +720,9 @@ export function AppShell() {
                       ["銀行支出", currency(summary.bankExpense), "只計銀行帳支出"],
                       ["現金存入銀行", currency(summary.cashToBank), "帳戶間移轉，不列入總收入"],
                       ["銀行提款轉現金", currency(summary.bankToCash), "帳戶間移轉，不列入總收入"],
-                      ["現金結餘", currency(metrics.cash), "目前現金"],
-                      ["銀行結餘", currency(metrics.bank), "目前銀行"],
-                      ["總資金", currency(metrics.total), "現金 + 銀行合計"]
+                      ["現金結餘", currency(runningMetrics.cash), "目前現金"],
+                      ["銀行結餘", currency(runningMetrics.bank), "目前銀行"],
+                      ["總資金", currency(runningMetrics.total), "現金 + 銀行合計"]
                     ].map(([label, value, note]) => (
                       <div key={String(label)} className="mobile-report-card">
                         <div className="mobile-report-label">{label}</div>
@@ -734,30 +740,32 @@ export function AppShell() {
                   <div className="field">
                     <div className="label">期初現金</div>
                     <input
-                      className="input"
+                      className="input input-locked"
                       type="number"
                       value={settings?.opening_cash ?? 0}
-                      onChange={(e) => setSettings((prev) => prev ? ({ ...prev, opening_cash: Number(e.target.value || 0) }) : prev)}
+                      readOnly
+                      disabled
                     />
                   </div>
 
                   <div className="field" style={{ marginTop: 12 }}>
                     <div className="label">期初銀行</div>
                     <input
-                      className="input"
+                      className="input input-locked"
                       type="number"
                       value={settings?.opening_bank ?? 0}
-                      onChange={(e) => setSettings((prev) => prev ? ({ ...prev, opening_bank: Number(e.target.value || 0) }) : prev)}
+                      readOnly
+                      disabled
                     />
                   </div>
 
                   <div style={{ marginTop: 14 }}>
-                    <button className="btn" onClick={saveOpeningBalances} disabled={savingBalances || !settings}>
-                      {savingBalances ? "儲存中..." : "儲存期初金額"}
+                    <button className="btn btn-outline" disabled>
+                      期初金額固定
                     </button>
                   </div>
 
-                  <div className="footer-note">這兩個數字會影響目前現金、銀行與總資金計算。</div>
+                  <div className="footer-note">連續記帳模式下，期初金額視為帳本起點。後續請用交易持續累加，不要再改動期初金額。</div>
                 </div>
               </div>
             </div>
@@ -912,7 +920,7 @@ function TransactionTable({
                 <div className="mobile-tx-category">{tx.category}</div>
                 <div className="mobile-tx-meta">{accountLabel(tx.account)}</div>
               </div>
-              <div className={tx.type === "income" ? "mobile-tx-amount money-income" : tx.type === "expense" ? "mobile-tx-amount money-expense" : "mobile-tx-amount"}>{currency(tx.amount)}</div>
+              <div className="mobile-tx-amount">{currency(tx.amount)}</div>
             </div>
 
             {tx.note ? <div className="mobile-tx-note">{tx.note}</div> : null}
