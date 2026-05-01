@@ -303,31 +303,46 @@ export function AppShell() {
 
   const currentWorkspace = workspaces.find((item) => item.id === currentWorkspaceId) ?? null;
 
+  const reportRange = useMemo(() => {
+    if (reportType === "month") {
+      const [year, month] = reportMonth.split("-").map(Number);
+      const lastDay = new Date(year, month, 0).getDate();
+      return {
+        start: `${reportMonth}-01`,
+        end: `${reportMonth}-${String(lastDay).padStart(2, "0")}`
+      };
+    }
+
+    if (reportType === "year") {
+      return {
+        start: `${reportYear}-01-01`,
+        end: `${reportYear}-12-31`
+      };
+    }
+
+    const targetDate = new Date();
+    const day = targetDate.getDay();
+    const diff = day === 0 ? 6 : day - 1;
+    const monday = new Date(targetDate);
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(targetDate.getDate() - diff);
+
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    const start = `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, "0")}-${String(monday.getDate()).padStart(2, "0")}`;
+    const end = `${sunday.getFullYear()}-${String(sunday.getMonth() + 1).padStart(2, "0")}-${String(sunday.getDate()).padStart(2, "0")}`;
+
+    return { start, end };
+  }, [reportType, reportMonth, reportYear]);
+
   const reportFilteredTransactions = useMemo(() => {
-    return transactions.filter((tx) => {
-      if (reportType === "month") {
-        return tx.date.slice(0, 7) === reportMonth;
-      }
+    return transactions.filter((tx) => tx.date >= reportRange.start && tx.date <= reportRange.end);
+  }, [transactions, reportRange]);
 
-      if (reportType === "year") {
-        return tx.date.slice(0, 4) === reportYear;
-      }
-
-      const targetDate = new Date();
-      const day = targetDate.getDay();
-      const diff = day === 0 ? 6 : day - 1;
-      const monday = new Date(targetDate);
-      monday.setHours(0, 0, 0, 0);
-      monday.setDate(targetDate.getDate() - diff);
-
-      const sunday = new Date(monday);
-      sunday.setDate(monday.getDate() + 6);
-      sunday.setHours(23, 59, 59, 999);
-
-      const txDate = new Date(tx.date + "T12:00:00");
-      return txDate >= monday && txDate <= sunday;
-    });
-  }, [transactions, reportType, reportMonth, reportYear]);
+  const reportBalanceTransactions = useMemo(() => {
+    return transactions.filter((tx) => tx.date <= reportRange.end);
+  }, [transactions, reportRange]);
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter((tx) => {
@@ -350,8 +365,8 @@ export function AppShell() {
   const runningSummary = useMemo(() => getSummaryRows(transactions), [transactions]);
 
   const reportMetrics = useMemo(() => {
-    return getMetrics(reportFilteredTransactions, settings?.opening_cash ?? 0, settings?.opening_bank ?? 0);
-  }, [reportFilteredTransactions, settings]);
+    return getMetrics(reportBalanceTransactions, settings?.opening_cash ?? 0, settings?.opening_bank ?? 0);
+  }, [reportBalanceTransactions, settings]);
 
   const reportSummary = useMemo(() => getSummaryRows(reportFilteredTransactions), [reportFilteredTransactions]);
 
@@ -381,9 +396,9 @@ export function AppShell() {
       ["銀行支出", reportSummary.bankExpense, "只計銀行帳支出"],
       ["現金存入銀行", reportSummary.cashToBank, "帳戶間移轉"],
       ["銀行提款轉現金", reportSummary.bankToCash, "帳戶間移轉"],
-      ["現金結餘", runningMetrics.cash, "目前現金"],
-      ["銀行結餘", runningMetrics.bank, "目前銀行"],
-      ["總資金", runningMetrics.total, "現金 + 銀行"]
+      ["現金結餘", reportMetrics.cash, "截至本期現金"],
+      ["銀行結餘", reportMetrics.bank, "截至本期銀行"],
+      ["總資金", reportMetrics.total, "截至本期現金 + 銀行"]
     ];
     downloadCsv("週報表.csv", rows);
   }
